@@ -15,11 +15,25 @@ limitations under the License.
 */
 
 using Gtk;
+using Lua;
+
+LuaVM vm; //one vm to rule them all
+
+//this will be updated later
+const string filename = "lernaconf.lua";
 
 int main (string[] args)
 {
     Gtk.init(ref args);
 
+    vm = new LuaVM();
+    vm.open_libs();
+    //a little ugly using the or short circuit...
+    if(0 != vm.load_file(filename) || 0!= vm.pcall(0,0,0))
+    {
+      stderr.printf(@"Couldn't run configuration file: $filename\n");
+      stderr.printf(@"$(vm.to_string(-1))\n");
+    }
     var browser = new LernaWindow();
     browser.start();
 

@@ -12,18 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# for fish shell
 VC=valac
-VFLAGS=--pkg gtk+-3.0 --pkg webkit2gtk-4.0 --pkg gee-1.0
+CC=gcc
+CFLAGS=`pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0 gee-1.0 lua` -include lauxlib.h
+VFLAGS=--verbose --pkg gtk+-3.0 --pkg webkit2gtk-4.0 --pkg gee-1.0 --pkg lua -C 
 VSOURCES=main.vala window.vala page.vala tabstrip.vala button.vala tab.vala
-VOBJECTS=$(VSOURCES:%.vala=%.c) $(VSOURCES:%.vala=%.o)
+VCFILES=$(VSOURCES:%.vala=%.c)
+VOBJECTS=$(VSOURCES:%.vala=%.o)
 
 TARGET=lerna
 
-all: $(SOURCES) $(TARGET)
+all: $(VSOURCES) $(TARGET)
 
-$(TARGET): $(SOURCES)
-	$(VC) $(VFLAGS) $(VSOURCES) -o $(TARGET)
+$(TARGET): toc
+	$(CC) $(CFLAGS) $(VCFILES) -o $(TARGET)
+toc: $(VSOURCES)
+	$(VC) $(VFLAGS) $(VSOURCES)
 
 clean:
-	rm -f $(VOBJECTS) $(TARGET)
+	rm -f $(VOBJECTS) $(VCFILES) $(TARGET)
