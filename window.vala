@@ -28,21 +28,11 @@ public class LernaWindow : Gtk.Window
 
     public LernaWindow(LuaVM vm)
     {
-        //try to call the lua function for this
-        vm.get_global("lerna_window_created");
-        if( vm.is_function(-1) )
-        {
-          Gtk.Window* win = this;
-          vm.push_lightuserdata(win);
-          if( 0 != vm.pcall(1,0,0) )
-            stderr.printf(@"error running function 'lerna_window_created'\n$(vm.to_string(-1))");
-        }
-
         this.title = LernaWindow.TITLE;
         set_default_size (800, 600);
 
         stack = new Stack();
-        tabstrip = new LernaTabstrip(stack);
+        tabstrip = new LernaTabstrip(vm,stack);
         box =  new Box(Orientation.VERTICAL,0);
         box.pack_start(tabstrip,false,false);
         box.pack_start(stack,true,true);
@@ -57,6 +47,16 @@ public class LernaWindow : Gtk.Window
           page.start();
           stack.visible_child=page;
         });
+
+        //try to call the lua function for this
+        vm.get_global("lerna_window_created");
+        if( vm.is_function(-1) )
+        {
+            Gtk.Window* win = this;
+            vm.push_lightuserdata(win);
+            if( 0 != vm.pcall(1,0,0) )
+              stderr.printf(@"error running function 'lerna_window_created'\n$(vm.to_string(-1))");
+        }
     }
 
     public void start()

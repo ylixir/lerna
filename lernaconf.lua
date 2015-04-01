@@ -13,3 +13,8 @@ function lerna_window_created(window)
   end
   print("hello constructor")
 end
+
+--and when a new tab is created
+function lerna_tab_created(stack,child)
+  print("hello tab")
+end

@@ -16,6 +16,7 @@ limitations under the License.
 using Gtk;
 using Gee;
 using Pango;
+using Lua;
 
 public class LernaTabstrip : Box
 {
@@ -29,7 +30,7 @@ public class LernaTabstrip : Box
       new_btn.destroy();
       stack.destroy();
     }
-    public LernaTabstrip(Stack stack, Orientation o=Orientation.HORIZONTAL, int space=2)
+    public LernaTabstrip(LuaVM vm, Stack stack, Orientation o=Orientation.HORIZONTAL, int space=2)
     {
         orientation=o;
         spacing=space;
@@ -105,6 +106,19 @@ public class LernaTabstrip : Box
             }
           });
           pack_start(tab,true,true);
+
+          //try to call the lua function for this
+          vm.get_global("lerna_tab_created");
+          if( vm.is_function(-1) )
+          {
+            Stack* stack_ptr = stack;
+            LernaPage* child_ptr = child;
+            vm.push_lightuserdata(stack);
+            vm.push_lightuserdata(child);
+            if( 0 != vm.pcall(2,0,0) )
+              stderr.printf(@"error running function 'lerna_window_created'\n$(vm.to_string(-1))");
+          }
+   
         });
         stack.remove.connect(
         (stack, child)=>
