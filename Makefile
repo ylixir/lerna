@@ -15,19 +15,27 @@
 VC=valac
 CC=gcc
 CFLAGS=`pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0 gee-1.0 lua` -include lauxlib.h
-VFLAGS=--verbose --pkg gtk+-3.0 --pkg webkit2gtk-4.0 --pkg gee-1.0 --pkg lua -C 
+VFLAGS=--pkg gtk+-3.0 --pkg webkit2gtk-4.0 --pkg gee-1.0 --pkg lua 
 VSOURCES=main.vala window.vala page.vala tabstrip.vala button.vala tab.vala
 VCFILES=$(VSOURCES:%.vala=%.c)
+VAPIFILES=$(VSOURCES:%.vala=%.vapi)
 VOBJECTS=$(VSOURCES:%.vala=%.o)
 
 TARGET=lerna
 
 all: $(VSOURCES) $(TARGET)
 
-$(TARGET): toc
-	$(CC) $(CFLAGS) $(VCFILES) -o $(TARGET)
-toc: $(VSOURCES)
-	$(VC) $(VFLAGS) $(VSOURCES)
+$(TARGET): $(VOBJECTS) $(VCFILES) $(VAPIFILES)
+	$(CC) $(CFLAGS) $(VOBJECTS) -o $(TARGET)
+
+%.vapi : %.vala
+	$(VC) $(VFLAGS) --fast-vapi=$@ $<
+
+%.c : %.vala $(VAPIFILES)
+	$(VC) $(VFLAGS) -C $(addprefix --use-fast-vapi=,$(subst $(basename $@).vapi,, $(VAPIFILES))) $<
+
+%.o : %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(VOBJECTS) $(VCFILES) $(TARGET)
+	rm -f $(VOBJECTS) $(VCFILES) $(VAPIFILES) $(TARGET)
