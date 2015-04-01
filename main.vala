@@ -20,15 +20,30 @@ using Lua;
 
 //this will be updated later
 const string filename = "lernaconf.lua";
+const string lgi_script = """
+--this is the script to load lgi.
+--we will call this before we load
+--the configuration fild
+lgi = require 'lgi'
+Gtk = lgi.Gtk
+""";
 
 int main (string[] args)
 {
-    Gtk.init(ref args);
     LuaVM vm; //one vm to rule them all
-
     vm = new LuaVM();
     vm.open_libs();
     //a little ugly using the or short circuit...
+    if(0 != vm.load_string(lgi_script) || 0!= vm.pcall(0,0,0))
+    {
+      stderr.printf(@"Couldn't run the lgi loader\n");
+      stderr.printf(@"$(vm.to_string(-1))\n");
+    }
+
+    //now initialize gtk, don't do it earlier because of
+    //lgi calling gtk_disable_setlocale
+    Gtk.init(ref args);
+
     if(0 != vm.load_file(filename) || 0!= vm.pcall(0,0,0))
     {
       stderr.printf(@"Couldn't run configuration file: $filename\n");

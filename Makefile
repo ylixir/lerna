@@ -16,7 +16,7 @@ VC=valac
 CC=gcc
 CFLAGS=`pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0 gee-1.0 lua` -include lauxlib.h
 VFLAGS=--pkg gtk+-3.0 --pkg webkit2gtk-4.0 --pkg gee-1.0 --pkg lua 
-VSOURCES=main.vala window.vala page.vala tabstrip.vala button.vala tab.vala
+VSOURCES=main.vala window.vala page.vala tabstrip.vala button.vala tab.vala lua.vala
 VCFILES=$(VSOURCES:%.vala=%.c)
 VAPIFILES=$(VSOURCES:%.vala=%.vapi)
 VOBJECTS=$(VSOURCES:%.vala=%.o)

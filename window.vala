@@ -50,13 +50,10 @@ public class LernaWindow : Gtk.Window
 
         //try to call the lua function for this
         vm.get_global("lerna_window_created");
-        if( vm.is_function(-1) )
-        {
-            Gtk.Window* win = this;
-            vm.push_lightuserdata(win);
-            if( 0 != vm.pcall(1,0,0) )
-              stderr.printf(@"error running function 'lerna_window_created'\n$(vm.to_string(-1))");
-        }
+        //remember push_lgi is just a convenience function
+        //that helps pass gtk things to lua
+        if(push_lgi(vm, "Window", this) &&  0 != vm.pcall(1,0,0) )
+          stderr.printf(@"error running function 'lerna_window_created'\n$(vm.to_string(-1))\n");
     }
 
     public void start()
