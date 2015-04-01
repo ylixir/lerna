@@ -15,6 +15,7 @@ limitations under the License.
 */
 using Gtk;
 using Gdk;
+using Lua;
 
 public class LernaWindow : Gtk.Window
 {
@@ -25,39 +26,34 @@ public class LernaWindow : Gtk.Window
     private LernaTabstrip tabstrip;
     private Stack stack;
 
-    public LernaWindow()
+    public LernaWindow(LuaVM vm)
     {
+        //try to call the lua function for this
+        vm.get_global("lerna_window_created");
+        if( vm.is_function(-1) )
+        {
+          Gtk.Window* win = this;
+          vm.push_lightuserdata(win);
+          if( 0 != vm.pcall(1,0,0) )
+            stderr.printf(@"error running function 'lerna_window_created'\n$(vm.to_string(-1))");
+        }
+
         this.title = LernaWindow.TITLE;
         set_default_size (800, 600);
 
-        create_widgets();
-        connect_signals();
-    }
-
-    private void create_widgets()
-    {
         stack = new Stack();
         tabstrip = new LernaTabstrip(stack);
         box =  new Box(Orientation.VERTICAL,0);
         box.pack_start(tabstrip,false,false);
         box.pack_start(stack,true,true);
         add(box);
-    }
 
-    private void connect_signals()
-    {
         destroy.connect(Gtk.main_quit);
         tabstrip.new_clicked.connect((source)=>
         {
           LernaPage page = new LernaPage();
           stack.add(page);
           stack.child_set_property(page,"title","[No Title]");
-          /*
-          page.title_changed.connect((source,title)=>
-          {
-            stack.child_set_property(source,"title",title);
-          });
-          */
           page.start();
           stack.visible_child=page;
         });

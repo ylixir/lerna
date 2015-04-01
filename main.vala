@@ -17,7 +17,6 @@ limitations under the License.
 using Gtk;
 using Lua;
 
-LuaVM vm; //one vm to rule them all
 
 //this will be updated later
 const string filename = "lernaconf.lua";
@@ -25,6 +24,7 @@ const string filename = "lernaconf.lua";
 int main (string[] args)
 {
     Gtk.init(ref args);
+    LuaVM vm; //one vm to rule them all
 
     vm = new LuaVM();
     vm.open_libs();
@@ -34,7 +34,7 @@ int main (string[] args)
       stderr.printf(@"Couldn't run configuration file: $filename\n");
       stderr.printf(@"$(vm.to_string(-1))\n");
     }
-    var browser = new LernaWindow();
+    var browser = new LernaWindow(vm);
     browser.start();
 
     Gtk.main();
