@@ -37,45 +37,30 @@ using Pango;
 
 public class LernaButton : EventBox
 {
-    private Label text;
+    /* expose the label that displays the text to everything */
+    public Label label;
 
     public signal void clicked();
 
-    public bool stretch 
-    {
-      get { return text.hexpand;  }
-      set { hexpand=value; text.hexpand = value; }
-    }
-    public string label
-    {
-      get { return text.label;  }
-      set { text.label = value; }
-    }
-    public AttrList attributes
-    {
-      get { return text.attributes;  }
-      set { text.attributes = value; }
-    }
-
-    ~LernaButton()
-    {
-      text.destroy();
-    }
-
     public LernaButton(string? str)
     {
-        text = new Label(str);
-        text.justify = Justification.CENTER;
-        add(text);
+        label = new Label(str);
+        label.justify = Justification.CENTER;
+    }
+
+    public void start()
+    {
+        /* pack the child widgets */
+        add(label);
+
+        /* connect signals */
         button_press_event.connect((source, event)=>
         {
           clicked();
           return false;
         });
-    }
 
-    public void start()
-    {
+        /* show all the children */
         show_all();
     }
 }

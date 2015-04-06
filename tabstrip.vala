@@ -133,6 +133,7 @@ public class LernaTabstrip : Box
     public void start()
     {
         show_all();
+        new_btn.start();
     }
 }
 

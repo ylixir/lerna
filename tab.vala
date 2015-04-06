@@ -26,13 +26,13 @@ class LernaTab : Box
   private Separator divider;
   public string label
   {
-    get { return text.label;  }
-    set { text.label = value; }
+    get { return text.label.label;  }
+    set { text.label.label = value; }
   }
   public AttrList attributes
   {
-    get { return text.attributes;  }
-    set { text.attributes = value; }
+    get { return text.label.attributes;  }
+    set { text.label.attributes = value; }
   }
 
   ~LernaButton()
@@ -48,7 +48,7 @@ class LernaTab : Box
     homogeneous = false;
 
     text = new LernaButton(str);
-    text.stretch=true;
+    text.label.hexpand=true;
     close_btn = new LernaButton("[x]");
     text.clicked.connect((source)=>{ clicked(); });
     close_btn.clicked.connect((source)=>{ close(); });
@@ -58,5 +58,7 @@ class LernaTab : Box
     pack_start(divider,false,false);
 
     show_all();
+    text.start();
+    close_btn.start();
   }
 }
