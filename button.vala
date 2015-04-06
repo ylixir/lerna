@@ -40,14 +40,22 @@ public class LernaButton : EventBox
     /* expose the label that displays the text to everything */
     public Label label;
 
+    /* you may connect to this to receive an event when a
+     * button goes down on this widget. Later I plan on updating
+     * this to make it a true "click" event
+     */
     public signal void clicked();
 
+    /* the constructor */
     public LernaButton(string? str)
     {
         label = new Label(str);
         label.justify = Justification.CENTER;
     }
 
+    /* this must be called to use this widget
+     * later maybe replace with an event
+     */
     public void start()
     {
         /* pack the child widgets */
