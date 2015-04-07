@@ -111,8 +111,6 @@ public class LernaTabstrip : Box
           vm.get_global("lerna_tab_created");
           if( vm.is_function(-1) )
           {
-            //Stack* stack_ptr = stack;
-            //LernaPage* child_ptr = child;
             vm.push_lightuserdata(stack);
             vm.push_lightuserdata(child);
             if( 0 != vm.pcall(2,0,0) )

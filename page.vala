@@ -18,32 +18,37 @@ using WebKit;
 
 public class LernaPage : Box
 {
-    //public signal void title_changed(string title);
+    //the tab for this page will show this
     public string title { get; set; }
 
     private WebView web_view;
     private Entry url_bar;
+
+    //it's hard to see the separation between the page and url bar
     private Separator divider;
 
-    ~LernaPage()
+    //public LernaPage(Orientation o=Orientation.VERTICAL, int s=0)
+    public LernaPage()
     {
-      web_view.destroy();
-      url_bar.destroy();
-      divider.destroy();
-    }
-    public LernaPage(Orientation o=Orientation.VERTICAL, int s=0)
-    {
-        orientation=o;
-        spacing=s;
-
+        /* create the children */
         web_view = new WebView();
         url_bar = new Entry();
         divider = new Separator(Orientation.HORIZONTAL);
+
+        /* set the defaults */
         url_bar.has_frame=false;
+        orientation=Orientation.VERTICAL;
+        spacing=0;
+    }
+
+    public void start()
+    {
+        /* pack the widgets */
         pack_start(url_bar,false,false);
         pack_start(divider,false,false);
         pack_start(web_view,true,true);
 
+        /* connect the signals */
         web_view.close.connect(
         (source)=>
         {
@@ -76,11 +81,11 @@ public class LernaPage : Box
           else
             web_view.load_uri(url_bar.text);
         });
-    }
 
-    public void start()
-    {
+        /* the url bar should have the focus when the window is created */
         url_bar.grab_focus();
+
+        /* show all the children */
         show_all();
     }
 }
