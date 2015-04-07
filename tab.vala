@@ -18,47 +18,37 @@ using Pango;
 
 class LernaTab : Box
 {
-  public signal void clicked();
-  public signal void close();
-  
-  private LernaButton text;
-  private LernaButton close_btn;
+  public LernaButton text;     //the text of the tab
+  public LernaButton close_btn; //a close button
   private Separator divider;
-  public string label
-  {
-    get { return text.label.label;  }
-    set { text.label.label = value; }
-  }
-  public AttrList attributes
-  {
-    get { return text.label.attributes;  }
-    set { text.label.attributes = value; }
-  }
 
-  ~LernaButton()
+  //string just gets passed along to the label
+  public LernaTab(string? str)
   {
-    text.destroy();
-    close_btn.destroy();
-    divider.destroy();
-  }
-  public LernaTab(string str)
-  {
+    /* create the children */
+    text = new LernaButton(str);
+    close_btn = new LernaButton("[x]");
+    divider = new Separator(Orientation.VERTICAL);
+
+    /* set the defaults */
     orientation = Orientation.HORIZONTAL;
     spacing =  2;
     homogeneous = false;
-
-    text = new LernaButton(str);
     text.label.hexpand=true;
-    close_btn = new LernaButton("[x]");
-    text.clicked.connect((source)=>{ clicked(); });
-    close_btn.clicked.connect((source)=>{ close(); });
-    divider = new Separator(Orientation.VERTICAL);
+  }
+
+  public void start()
+  {
+    /* pack the children */
     pack_start(text,true,true);
     pack_start(close_btn,false,false);
     pack_start(divider,false,false);
 
-    show_all();
+    /* start the buttons */
     text.start();
     close_btn.start();
+
+    /* show all the children */
+    show_all();
   }
 }
