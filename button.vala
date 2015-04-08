@@ -58,23 +58,11 @@ public class LernaButton : EventBox
   public bool wrap { get; set; }
   public Pango.WrapMode wrap_mode { get; set; }
   /* read only label properties */
-  public int cursor_position
-  {
-    get { return text.cursor_position; }
-  }
-  public uint  mnemonic_keyval
-  {
-    get { return text.mnemonic_keyval; }
-  }
-  public int selection_bound
-  {
-    get { return text.selection_bound; }
-  }
+  public int cursor_position { get { return text.cursor_position; } }
+  public uint  mnemonic_keyval { get { return text.mnemonic_keyval; } }
+  public int selection_bound { get { return text.selection_bound; } }
   /* write only label properties */
-  public string pattern
-  {
-    set { text.pattern=value; }
-  }
+  public string pattern { set { text.pattern=value; } }
 
   /* you may connect to this to receive an event when a
    * button goes down on this widget. Later I plan on updating
