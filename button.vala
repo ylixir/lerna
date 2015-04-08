@@ -35,40 +35,90 @@ taking up less screen real estate.
 using Gtk;
 using Pango;
 
+///public class LernaButton : EventBox
 public class LernaButton : EventBox
 {
-    /* expose the label that displays the text to everything */
-    public Label label;
+  /* the label that displays the text */
+  private Label text;
+  /* properties that map to the above label */
+  public double angle { get; set; }
+  public AttrList attributes { get; set; }
+  public EllipsizeMode ellipsize { get; set; }
+  public Justification justify { get; set; }
+  public string label { get; set; }
+  public int lines { get; set; }
+  public int  max_width_chars { get; set; }
+  public Widget mnemonic_widget { get; set; }
+  public bool selectable { get; set; }
+  public bool single_line_mode { get; set; }
+  public bool track_visited_links { get; set; }
+  public bool use_markup { get; set; }
+  public bool use_underline { get; set; }
+  public int width_chars { get; set; }
+  public bool wrap { get; set; }
+  public Pango.WrapMode wrap_mode { get; set; }
+  /* read only label properties */
+  public int cursor_position
+  {
+    get { return text.cursor_position; }
+  }
+  public uint  mnemonic_keyval
+  {
+    get { return text.mnemonic_keyval; }
+  }
+  public int selection_bound
+  {
+    get { return text.selection_bound; }
+  }
+  /* write only label properties */
+  public string pattern
+  {
+    set { text.pattern=value; }
+  }
 
-    /* you may connect to this to receive an event when a
-     * button goes down on this widget. Later I plan on updating
-     * this to make it a true "click" event
-     */
-    public signal void clicked();
+  /* you may connect to this to receive an event when a
+   * button goes down on this widget. Later I plan on updating
+   * this to make it a true "click" event
+   */
+  public signal void clicked();
 
-    /* the constructor */
-    public LernaButton(string? str)
+  /* the constructor */
+  public LernaButton(string? str)
+  {
+      text = new Label(str);
+      text.justify = Justification.CENTER;
+  }
+
+  /* this must be called to use this widget
+   * later maybe replace with an event
+   */
+  public void start()
+  {
+    /* pack the child widgets */
+    add(text);
+
+    /* connect signals */
+    button_press_event.connect((source, event)=>
     {
-        label = new Label(str);
-        label.justify = Justification.CENTER;
-    }
+      clicked();
+      return false;
+    });
 
-    /* this must be called to use this widget
-     * later maybe replace with an event
-     */
-    public void start()
+    /* bind the label properties */
+    BindingFlags flags = BindingFlags.SYNC_CREATE|BindingFlags.BIDIRECTIONAL;
+    string[] props =
     {
-        /* pack the child widgets */
-        add(label);
+      "angle",            "attributes",         "ellipsize",
+      "justify",          "label",              "lines",
+      "max_width_chars",  "mnemonic_widget",    "selectable",
+      "single_line_mode", "track_visited_links","use_markup",
+      "use_underline",    "width_chars",        "wrap",
+      "wrap_mode"
+    };
+    foreach(var p in props)
+      text.bind_property(p,this,p,flags);
 
-        /* connect signals */
-        button_press_event.connect((source, event)=>
-        {
-          clicked();
-          return false;
-        });
-
-        /* show all the children */
-        show_all();
-    }
+    /* show all the children */
+    show_all();
+  }
 }

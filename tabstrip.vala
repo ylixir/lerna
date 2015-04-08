@@ -25,11 +25,6 @@ public class LernaTabstrip : Box
     private HashMap<Widget,LernaTab> tabs;
     private Stack stack;
 
-    ~LernaTabstrip()
-    {
-      new_btn.destroy();
-      stack.destroy();
-    }
     public LernaTabstrip(LuaVM vm, Stack stack, Orientation o=Orientation.HORIZONTAL, int space=2)
     {
         orientation=o;
@@ -39,6 +34,7 @@ public class LernaTabstrip : Box
         new_btn = new LernaButton("[+]");
         tabs = new HashMap<Widget,LernaTab>();
         this.stack = stack;
+
         pack_end(new_btn,false,false);
 
         new_btn.clicked.connect((source)=>
@@ -54,24 +50,27 @@ public class LernaTabstrip : Box
 
           LernaTab tab = new LernaTab("[No Title]");
 
+          pack_start(tab,true,true);
+          tab.start();
+
           //unbold the old tab
           old_tab = tabs.get(stack.visible_child);
           if( null != old_tab )
           {
-            attr = old_tab.text.label.attributes ?? new AttrList();
+            attr = old_tab.text.attributes ?? new AttrList();
             attr.change(attr_weight_new(Weight.NORMAL));
-            old_tab.text.label.attributes = attr;
+            old_tab.text.attributes = attr;
           }
           //bold the new tab
-          attr = tab.text.label.attributes ?? new AttrList();
+          attr = tab.text.attributes ?? new AttrList();
           attr.change(attr_weight_new(Weight.BOLD));
-          tab.text.label.attributes = attr;
+          tab.text.attributes = attr;
 
           tabs.set(child, tab);
           child.notify["title"].connect(
           (source)=>
           {
-            tabs.get(child).text.label.label=((LernaPage)child).title;
+            tabs.get(child).text.label=((LernaPage)child).title;
           });
           tab.text.clicked.connect(
           (source)=>
@@ -80,14 +79,14 @@ public class LernaTabstrip : Box
             old_tab = tabs.get(stack.visible_child);
             if( null != old_tab )
             {
-              attr = old_tab.text.label.attributes ?? new AttrList();
+              attr = old_tab.text.attributes ?? new AttrList();
               attr.change(attr_weight_new(Weight.NORMAL));
-              old_tab.text.label.attributes = attr;
+              old_tab.text.attributes = attr;
             }
             //bold the new tab
-            attr = tab.text.label.attributes ?? new AttrList();
+            attr = tab.text.attributes ?? new AttrList();
             attr.change(attr_weight_new(Weight.BOLD));
-            tab.text.label.attributes = attr;
+            tab.text.attributes = attr;
 
             stack.visible_child=child;
           });
@@ -100,13 +99,11 @@ public class LernaTabstrip : Box
             LernaTab new_tab = tabs.get(stack.visible_child);
             if( null != new_tab )
             {
-              attr = new_tab.text.label.attributes ?? new AttrList();
+              attr = new_tab.text.attributes ?? new AttrList();
               attr.change(attr_weight_new(Weight.BOLD));
-              new_tab.text.label.attributes = attr;
+              new_tab.text.attributes = attr;
             }
           });
-          pack_start(tab,true,true);
-          tab.start();
 
           //try to call the lua function for this
           vm.get_global("lerna_tab_created");

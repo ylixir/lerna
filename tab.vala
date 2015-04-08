@@ -34,7 +34,7 @@ class LernaTab : Box
     orientation = Orientation.HORIZONTAL;
     spacing =  2;
     homogeneous = false;
-    text.label.hexpand=true;
+    text.hexpand=true;
   }
 
   public void start()
