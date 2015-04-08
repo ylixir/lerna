@@ -40,6 +40,7 @@ public class LernaButton : EventBox
 {
   /* the label that displays the text */
   private Label text;
+
   /* properties that map to the above label */
   public double angle { get; set; }
   public AttrList attributes { get; set; }
